@@ -1,120 +1,32 @@
-// import express from 'express';
-// import http from 'http';
-// import { Server } from 'socket.io';
-// import cors from 'cors';
-// import admin from 'firebase-admin';
-// import { getFirestore } from 'firebase-admin/firestore';
-// import serviceAccount from './assignbase-firebase-adminsdk-zdql0-aba7e8fd7d.json'; // Adjust path as needed
-
-// // Initialize Firebase Admin SDK
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-// });
-
-// const db = getFirestore(); // Initialize Firestore
-
-// const app = express();
-
-// app.use(
-//   cors({
-//     origin: '*',
-//     methods: ['GET', 'POST'],
-//     allowedHeaders: ['Content-Type'],
-//     credentials: true,
-//   })
-// );
-
-// const server = http.createServer(app);
-
-// const io = new Server(server, {
-//   cors: {
-//     origin: '*',
-//     methods: ['GET', 'POST'],
-//     allowedHeaders: ['Content-Type'],
-//     credentials: true,
-//   },
-// });
-
-// io.on('connection', (socket) => {
-//   console.log('a user connected:', socket.id);
-
-//   socket.on('join-room', async (roomId) => {
-//     console.log(`User ${socket.id} joined room ${roomId}`);
-//     socket.join(roomId);
-
-//     // Optionally: You can load previous messages from Firestore and send them to the user here.
-//     const messagesSnapshot = await db.collection('rooms').doc(roomId).collection('messages').get();
-//     const messages = messagesSnapshot.docs.map((doc) => doc.data());
-//     socket.emit('previousMessages', messages); // Send previous messages to the user
-//   });
-
-//   socket.on('message', async (messageData) => {
-//     console.log(`Message from ${socket.id} in room ${messageData.roomId}: ${messageData.message}`);
-
-//     // Store the message in Firestore
-//     const messageRef = await db
-//       .collection('rooms')
-//       .doc(messageData.roomId)
-//       .collection('messages')
-//       .add({
-//         senderId: socket.id,
-//         message: messageData.message,
-//         timestamp: admin.firestore.FieldValue.serverTimestamp(),
-//         read: false,
-//       });
-
-//     // Broadcast the message to others in the room
-//     io.to(messageData.roomId).emit('message', {
-//       id: messageRef.id,
-//       senderId: socket.id,
-//       message: messageData.message,
-//     });
-//   });
-
-//   socket.on('typing', (data) => {
-//     console.log(`User ${socket.id} is typing in room ${data.roomId}`);
-
-//     // Broadcast typing status to others in the room
-//     socket.to(data.roomId).emit('typing', { userId: socket.id });
-//   });
-
-//   socket.on('stopTyping', (data) => {
-//     console.log(`User ${socket.id} stopped typing in room ${data.roomId}`);
-
-//     // Broadcast stopTyping status to others in the room
-//     socket.to(data.roomId).emit('stopTyping', { userId: socket.id });
-//   });
-
-//   socket.on('markAsRead', async (roomId, messageId) => {
-//     console.log(`Message ${messageId} in room ${roomId} marked as read`);
-
-//     // Update the message to mark it as read
-//     await db
-//       .collection('rooms')
-//       .doc(roomId)
-//       .collection('messages')
-//       .doc(messageId)
-//       .update({ read: true });
-
-//     // Notify other clients that the message has been read
-//     io.to(roomId).emit('messageRead', messageId);
-//   });
-
-//   socket.on('disconnect', () => {
-//     console.log('user disconnected:', socket.id);
-//   });
-// });
-
-// server.listen(3001, () => {
-//   console.log('Server listening on http://localhost:3001');
-// });
+//import 'dotenv/config'; // Add this line to load .env variables
 import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
-import admin from 'firebase-admin';
+import admin, { credential } from 'firebase-admin';
 import { getFirestore } from 'firebase-admin/firestore';
-import serviceAccount from './assignbase-firebase-adminsdk-zdql0-aba7e8fd7d.json'; // Adjust path as needed
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+// import serviceAccount from './assignbase-firebase-adminsdk-zdql0-aba7e8fd7d.json'; // Adjust path as needed
+
+//const credential = JSON.parse(Buffer.from(process.env.FIREBASE_PRIVATE_KEY, 'base64').toString());
+
+// Initialize Firebase Admin SDK using environment variables
+
+const serviceAccount = {
+  type: 'service_account',
+  project_id: process.env.FIREBASE_PROJECT_ID,
+  private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
+  private_key: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'), // Replace new line escape characters,
+  client_email: process.env.FIREBASE_CLIENT_EMAIL,
+  client_id: process.env.FIREBASE_CLIENT_ID,
+  auth_uri: 'https://accounts.google.com/o/oauth2/auth',
+  token_uri: 'https://oauth2.googleapis.com/token',
+  auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
+  client_x509_cert_url: process.env.FIREBASE_CLIENT_CERT_URL,
+  universe_domain: process.env.FIREBASE_UNIVERSE_DOMAIN,
+};
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({
