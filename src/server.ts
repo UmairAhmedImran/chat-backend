@@ -32,7 +32,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: '*',
+    origin: 'https://chat-frontend-pink-phi.vercel.app/',
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type'],
     credentials: true,
@@ -40,14 +40,7 @@ app.use(
 );
 
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: 'https://chat-frontend-pink-phi.vercel.app/',
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type'],
-    credentials: true,
-  },
-});
+const io = new Server(server);
 
 io.on('connection', (socket) => {
   console.log('a user connected:', socket.id);
