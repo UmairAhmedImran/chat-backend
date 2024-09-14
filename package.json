@@ -4,10 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  "build": "tsc",  // Compiles TypeScript into JavaScript
-  "start": "node dist/server.js"  // Runs the compiled JavaScript
-},
-
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
