@@ -8,11 +8,6 @@ import { getFirestore } from 'firebase-admin/firestore';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
-// import serviceAccount from './assignbase-firebase-adminsdk-zdql0-aba7e8fd7d.json'; // Adjust path as needed
-
-//const credential = JSON.parse(Buffer.from(process.env.FIREBASE_PRIVATE_KEY, 'base64').toString());
-
-// Initialize Firebase Admin SDK using environment variables
 
 const serviceAccount = {
   type: 'service_account',
