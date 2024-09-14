@@ -1,4 +1,3 @@
-//import 'dotenv/config'; // Add this line to load .env variables
 import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
