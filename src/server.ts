@@ -28,7 +28,6 @@ admin.initializeApp({
 });
 
 const db = getFirestore(); // Initialize Firestore
-
 const app = express();
 
 app.use(
@@ -41,7 +40,6 @@ app.use(
 );
 
 const server = http.createServer(app);
-
 const io = new Server(server, {
   cors: {
     origin: 'https://chat-frontend-pink-phi.vercel.app/',
@@ -58,7 +56,6 @@ io.on('connection', (socket) => {
     console.log(`User ${socket.id} joined room ${roomId}`);
     socket.join(roomId);
 
-    // Optionally: You can load previous messages from Firestore and send them to the user here.
     const messagesSnapshot = await db.collection('rooms').doc(roomId).collection('messages').get();
     const messages = messagesSnapshot.docs.map((doc) => doc.data());
     socket.emit('previousMessages', messages); // Send previous messages to the user
